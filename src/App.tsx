@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { GlobalProvider, useAuth } from './context/GlobalContext';
 import { TabBar } from './components';
@@ -175,8 +175,21 @@ const RouteWrapper: React.FC<RouteWrapperProps> = ({ children, requireAuth = fal
 const AppContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState('home');
   const location = useLocation();
+  const navigate = useNavigate();
   
   const showTabBar = TABBAR_ROUTES.includes(location.pathname);
+
+  // TabBar 点击时导航到对应页面
+  const handleTabChange = (key: string) => {
+    setActiveTab(key);
+    const tabToRoute: Record<string, string> = {
+      home: '/',
+      calendar: '/calendar',
+      messages: '/messages',
+      profile: '/profile',
+    };
+    navigate(tabToRoute[key]);
+  };
 
   return (
     <div className="h-full bg-background">
@@ -389,9 +402,7 @@ const AppContent: React.FC = () => {
       {showTabBar && (
         <TabBar 
           activeKey={activeTab} 
-          onChange={(key) => {
-            setActiveTab(key);
-          }} 
+          onChange={handleTabChange} 
         />
       )}
     </div>
